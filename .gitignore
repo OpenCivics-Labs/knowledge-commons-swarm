@@ -1,0 +1,8 @@
+# macOS
+.DS_Store
+
+# Claude / editor metadata
+.claude/
+
+# Local planning/scratch files
+*.md
