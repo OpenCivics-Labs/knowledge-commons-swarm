@@ -2913,8 +2913,8 @@
       </a>
       <div class="nav-right">
         <button class="nav-link" id="navInvitation" onclick="showEnv('invitation')">Invitation</button>
-        <button class="nav-link" id="navParticipant" onclick="showEnv('participant')">Participate</button>
-        <button class="nav-link" id="navFeed" onclick="showEnv('feed')">Feed</button>
+        <button class="nav-link" id="navParticipant" onclick="showEnv('participant')" style="display:none;">Participate</button>
+        <button class="nav-link" id="navFeed" onclick="showEnv('feed')" style="display:none;">Feed</button>
         <button class="nav-cta" id="envCta" onclick="openSignupModal()">
           Join the Swarm <span class="arrow">→</span>
         </button>
@@ -2932,11 +2932,11 @@
       <canvas id="dotGrid"></canvas>
       <div class="container">
         <div class="hero-content">
-          <span class="label">OpenCivics Consortium · Two-Day Online Convening</span>
-          <h1 style="margin-bottom: 1.5rem;">Knowledge Commoning <em>Swarm</em><span style="font-family: var(--font-display); font-size: 1.2rem; color: var(--green); font-weight: 600; letter-spacing: 0.02em; white-space: nowrap; vertical-align: middle; margin-left: 1.75rem; display: inline-block;">April 17–18, 2026</span></h1>
-          <p class="hero-desc">Together we are assembling an open Knowledge Commons Toolkit. Not building a platform. Not debating theory. Pooling what exists, making it legible, mapping how parts connect, and packaging it so any community can pick it up and put it to use. By the end of two days, we make it real.</p>
+          <span class="label">OpenCivics Consortium · Two Month Online Convening</span>
+          <h1 style="margin-bottom: 1.5rem;">Knowledge Commoning <em>Swarm</em><span style="font-family: var(--font-display); font-size: 1.2rem; color: var(--green); font-weight: 600; letter-spacing: 0.02em; white-space: nowrap; vertical-align: middle; margin-left: 1.75rem; display: inline-block;">May + June 2026</span></h1>
+          <p class="hero-desc">Together we are assembling an open Knowledge Commons Toolkit. Not building a platform. Not debating theory. Pooling what exists, making it legible, mapping how parts connect, and packaging it so any community can pick it up and put it to use.</p>
           <div class="hero-actions">
-            <button class="btn btn-primary" onclick="showEnv('participant')">Join the Swarm <span class="arrow">→</span></button>
+            <button class="btn btn-primary" onclick="openSignupModal()">Join the Swarm <span class="arrow">→</span></button>
             <a href="#what-is" class="btn btn-outline">Learn More <span class="arrow">↓</span></a>
           </div>
         </div>
@@ -3113,6 +3113,31 @@
             <p>The coherence we develop together is only valuable if others can build on it. We leave this experience having published a tangible guide, map, index and wizard — practical artifacts that help any community navigate the landscape, compose their own knowledge commons, and contribute back to the living ecology we've seeded.</p>
           </div>
         </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem; margin-top: 2rem; text-align: left;">
+          <div class="zone-card reveal reveal-delay-1">
+            <span class="zone-number" style="color: var(--accent);">Always On</span>
+            <h3>Self-Directed Contribution</h3>
+            <p class="zone-question" style="margin-bottom: 1rem;">Contribute on your own time, from anywhere.</p>
+            <p style="font-size: 0.98rem; color: var(--ink-secondary); line-height: 1.7;">The canvas, chat, and workspaces stay open across the full two months. Scout components, craft descriptions, connect parts, compose wizards, harvest patterns — follow your energy. Asynchronous by default so anyone across any timezone can show up however they're able.</p>
+          </div>
+          <div class="zone-card reveal reveal-delay-2">
+            <span class="zone-number" style="color: var(--accent);">Two Live Gatherings</span>
+            <h3>Monthly Pulse</h3>
+            <p class="zone-question" style="margin-bottom: 1rem;">Two live synchronous gatherings anchor the rhythm.</p>
+            <p style="font-size: 0.98rem; color: var(--ink-secondary); line-height: 1.7; margin-bottom: 1.25rem;">Each pulse is a chance to gather, share what's emerged, cross-pollinate, and recalibrate. The May pulse opens the work. The June pulse brings it to a close and commits to what's next.</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; padding-top: 1rem; border-top: 1px solid var(--border-faint);">
+              <div>
+                <span class="label" style="display: block; margin-bottom: 0.25rem;">Pulse 01</span>
+                <strong style="font-family: var(--font-display); font-size: 1.05rem;">May 2026</strong>
+              </div>
+              <div>
+                <span class="label" style="display: block; margin-bottom: 0.25rem;">Pulse 02</span>
+                <strong style="font-family: var(--font-display); font-size: 1.05rem;">June 2026</strong>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -3131,25 +3156,21 @@
             <div class="card-icon icon-earth">◎</div>
             <h3>Map</h3>
             <p>A living canvas of every component surfaced during the swarm — organized by function, described by what it does, with connections drawn between parts. Not a whiteboard that gets erased, but a permanent reference that evolves with the ecology it describes.</p>
-            <button class="btn btn-dark" onclick="showEnv('participant'); setTimeout(function(){document.querySelector('[data-tab=map]').click()},100)" style="padding: 10px 20px; font-size: 0.8rem;">Open Map <span class="arrow">→</span></button>
           </div>
           <div class="toolkit-card reveal reveal-delay-2">
             <div class="card-icon icon-root">▤</div>
             <h3>Assembly Wizard</h3>
             <p>An interactive tool that guides everyday people through the process of composing a knowledge commons in a specific context. The wizard should trace a path through the functions, explain how the choices connect and what to watch out for. Different starting points, same shared landscape.</p>
-            <button class="btn btn-dark" onclick="showEnv('participant'); setTimeout(function(){document.querySelector('[data-tab=wizard]').click()},100)" style="padding: 10px 20px; font-size: 0.8rem;">Open Wizard <span class="arrow">→</span></button>
           </div>
           <div class="toolkit-card reveal reveal-delay-3">
             <div class="card-icon icon-sky">◈</div>
             <h3>Instructional Guide</h3>
             <p>The conceptual frame that makes everything else navigable. What is a knowledge commons? What are its parts? How does this toolkit work? How do you start? Read this first, then use the map and wizards with confidence.</p>
-            <button class="btn btn-dark" onclick="showEnv('participant'); setTimeout(function(){document.querySelector('[data-tab=guide]').click()},100)" style="padding: 10px 20px; font-size: 0.8rem;">Open Guide <span class="arrow">→</span></button>
           </div>
           <div class="toolkit-card reveal reveal-delay-4">
             <div class="card-icon icon-violet">▦</div>
             <h3>Component Index</h3>
             <p>Every component indexed with structured metadata — function, affordances, limitations, connections, and openness. The searchable, relational backbone that makes the toolkit a living resource rather than a static document. This open source asset helps builders and communities discover and connect their pieces.</p>
-            <button class="btn btn-dark" onclick="showEnv('participant'); setTimeout(function(){document.querySelector('[data-tab=index]').click()},100)" style="padding: 10px 20px; font-size: 0.8rem;">Open Index <span class="arrow">→</span></button>
           </div>
         </div>
       </div>
@@ -3299,7 +3320,7 @@
         <h2 class="reveal">Ready to Swarm?</h2>
         <p class="reveal">Step in and start participating — get onboarded into the the toolkit blueprint, schedule, working tools, and everything you may need. Pick a move, find a function, follow your energy.</p>
         <div style="display:flex; gap:1rem; justify-content:center;" class="reveal">
-          <button class="btn btn-primary" onclick="showEnv('participant')">Participate <span class="arrow">→</span></button>
+          <button class="btn btn-primary" onclick="openSignupModal()">Join the Swarm <span class="arrow">→</span></button>
         </div>
       </div>
     </section>
@@ -4420,7 +4441,7 @@
     <div class="modal" onclick="event.stopPropagation()">
       <button class="modal-close" onclick="closeSignupModal()">✕</button>
       <h3 style="margin-bottom:0.5rem;">Join the Swarm</h3>
-      <p style="font-size:0.9rem; color:var(--ink-muted); margin-bottom:1.5rem;">Sign up as a participant for the Knowledge Commoning Swarm, April 17–18, 2026.</p>
+      <p style="font-size:0.9rem; color:var(--ink-muted); margin-bottom:1.5rem;">Sign up as a participant for the Knowledge Commoning Swarm, May + June 2026.</p>
       <div class="card-form" style="grid-template-columns: 1fr;">
         <div class="form-field">
           <label>Name</label>
@@ -4441,6 +4462,12 @@
         <div class="form-field">
           <label>Website / Profile</label>
           <input type="url" id="signupUrl" placeholder="https://...">
+        </div>
+        <div class="form-field full-width">
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; text-transform: none; letter-spacing: normal; font-family: var(--font-sans); font-size: 0.95rem; font-weight: 500; color: var(--ink);">
+            <input type="checkbox" id="signupOpencivics" style="width: 18px; height: 18px; margin: 0; cursor: pointer; accent-color: var(--accent);">
+            I am a member of OpenCivics
+          </label>
         </div>
         <div class="full-width" style="margin-top:0.5rem;">
           <button class="btn btn-dark" onclick="submitSignup()" style="padding:12px 24px; font-size:0.85rem;">Sign Up <span class="arrow">→</span></button>
@@ -4471,19 +4498,6 @@
   </div>
 
   <!-- ====== FOOTER ====== -->
-  <footer>
-    <div class="container">
-      <div class="footer-inner">
-        <div class="footer-links">
-          <a href="https://opencivics.co">opencivics.co</a>
-          <a href="https://commons.opencivics.co">commons</a>
-          <a href="https://wiki.opencivics.co">wiki</a>
-          <a href="https://broadcast.opencivics.co">broadcasts</a>
-        </div>
-        <span class="footer-credit">Knowledge Commoning Swarm — OpenCivics Network · Root down & rise up</span>
-      </div>
-    </div>
-  </footer>
 
   <!-- ====== JAVASCRIPT ====== -->
   <script>
