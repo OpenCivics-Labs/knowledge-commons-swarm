@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Stewards Dashboard — Knowledge Commoning Swarm</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inconsolata:wght@500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #080808;
+      --ink-secondary: #202020;
+      --ink-muted: #555;
+      --ink-faint: #888;
+      --paper: #ffffff;
+      --cream: #EDEDED;
+      --border: #d8d8d8;
+      --border-light: #e5e5e5;
+      --accent: #3414D0;
+      --green: #4AF98E;
+      --red: #c0392b;
+      --font-sans: 'Inter', system-ui, sans-serif;
+      --font-mono: 'Inconsolata', monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-sans);
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.5;
+    }
+    header {
+      border-bottom: 1px solid var(--border-light);
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header h1 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+    header .meta { font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink-faint); }
+    main { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+    }
+    button {
+      font-family: var(--font-sans);
+      cursor: pointer;
+      border: 1px solid var(--ink);
+      background: var(--paper);
+      color: var(--ink);
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      border-radius: 0;
+      transition: background 0.15s, color 0.15s;
+    }
+    button:hover { background: var(--ink); color: var(--paper); }
+    button.primary { background: var(--ink); color: var(--paper); }
+    button.primary:hover { background: #000; }
+    button.danger { border-color: var(--red); color: var(--red); }
+    button.danger:hover { background: var(--red); color: var(--paper); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    input[type="email"] {
+      font-family: var(--font-sans);
+      font-size: 1rem;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 0;
+      width: 100%;
+      max-width: 360px;
+    }
+    .card {
+      border: 1px solid var(--border-light);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+      background: var(--paper);
+    }
+    .card h3 { margin: 0 0 0.25rem; font-size: 1.05rem; }
+    .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .field { font-size: 0.9rem; }
+    .field strong { color: var(--ink-muted); font-weight: 500; margin-right: 6px; }
+    .interest { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed var(--border-light); white-space: pre-wrap; font-size: 0.92rem; line-height: 1.6; }
+    .vote-bar {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .vote-tally { font-family: var(--font-mono); font-size: 0.8rem; color: var(--ink-muted); margin-left: auto; }
+    .empty { color: var(--ink-faint); font-style: italic; padding: 3rem 0; text-align: center; }
+    .status {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 2px 8px;
+      border: 1px solid currentColor;
+      display: inline-block;
+    }
+    .status.pending { color: var(--ink-faint); }
+    .status.approved { color: #1a7a3e; border-color: #1a7a3e; }
+    .status.rejected { color: var(--red); }
+    .tabs { display: flex; gap: 0; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-light); }
+    .tab {
+      background: none;
+      border: none;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      color: var(--ink-muted);
+      border-bottom: 2px solid transparent;
+      border-radius: 0;
+    }
+    .tab:hover { color: var(--ink); background: none; }
+    .tab.active { color: var(--ink); border-bottom-color: var(--ink); }
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--ink);
+      color: var(--paper);
+      padding: 12px 18px;
+      font-size: 0.9rem;
+      max-width: 360px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; }
+    .login-pane { max-width: 420px; margin: 4rem auto; text-align: left; }
+    .login-pane h2 { margin-top: 0; }
+    .hint { font-size: 0.85rem; color: var(--ink-muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Stewards · Knowledge Commoning Swarm</h1>
+    <div class="meta">
+      <span id="userEmail"></span>
+      <button id="logoutBtn" style="margin-left: 12px; display:none; padding: 4px 10px; font-size: 0.78rem;">Sign out</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- LOGIN -->
+    <section id="loginPane" class="login-pane" style="display:none;">
+      <span class="label">Steward access</span>
+      <h2>Sign in</h2>
+      <p class="hint">Enter your steward email. We'll send you a one-time link.</p>
+      <form id="loginForm" style="margin-top: 1rem;">
+        <input type="email" id="loginEmail" required placeholder="you@opencivics.co" autocomplete="email">
+        <div style="margin-top: 12px;">
+          <button class="primary" type="submit">Send magic link →</button>
+        </div>
+        <p id="loginMessage" class="hint" style="margin-top: 1rem;"></p>
+      </form>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="dashPane" style="display:none;">
+      <div class="tabs">
+        <button class="tab active" data-status="pending">Pending</button>
+        <button class="tab" data-status="approved">Approved</button>
+        <button class="tab" data-status="rejected">Rejected</button>
+      </div>
+      <div id="appsList"></div>
+    </section>
+
+    <!-- DENIED (logged in but not a steward) -->
+    <section id="deniedPane" style="display:none;">
+      <p>Signed in as <strong id="deniedEmail"></strong>, but this account isn't on the steward list. If that's a mistake, contact team@opencivics.co.</p>
+      <button id="deniedLogoutBtn">Sign out</button>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="/supabase-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script>
+    const SUPABASE_URL = window.SUPABASE_URL || '';
+    const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || '';
+
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+      document.getElementById('main').innerHTML =
+        '<p style="padding:2rem;color:#c0392b;">Supabase config missing. Set <code>window.SUPABASE_URL</code> and <code>window.SUPABASE_ANON_KEY</code> in a <code>&lt;script&gt;</code> tag above this one.</p>';
+      throw new Error('Supabase not configured');
+    }
+
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const els = {
+      login: document.getElementById('loginPane'),
+      dash: document.getElementById('dashPane'),
+      denied: document.getElementById('deniedPane'),
+      userEmail: document.getElementById('userEmail'),
+      logoutBtn: document.getElementById('logoutBtn'),
+      loginForm: document.getElementById('loginForm'),
+      loginEmail: document.getElementById('loginEmail'),
+      loginMessage: document.getElementById('loginMessage'),
+      apps: document.getElementById('appsList'),
+      tabs: document.querySelectorAll('.tab'),
+      deniedEmail: document.getElementById('deniedEmail'),
+      deniedLogout: document.getElementById('deniedLogoutBtn'),
+      toast: document.getElementById('toast'),
+    };
+
+    let currentStatus = 'pending';
+    let currentUser = null;
+
+    function showToast(msg) {
+      els.toast.textContent = msg;
+      els.toast.classList.add('show');
+      setTimeout(() => els.toast.classList.remove('show'), 2400);
+    }
+
+    function show(pane) {
+      els.login.style.display = pane === 'login' ? 'block' : 'none';
+      els.dash.style.display = pane === 'dash' ? 'block' : 'none';
+      els.denied.style.display = pane === 'denied' ? 'block' : 'none';
+      els.logoutBtn.style.display = (pane === 'dash' || pane === 'denied') ? 'inline-block' : 'none';
+    }
+
+    async function init() {
+      const { data: { session } } = await sb.auth.getSession();
+      if (session) await onSession(session);
+      else show('login');
+
+      sb.auth.onAuthStateChange((_event, session) => {
+        if (session) onSession(session);
+        else show('login');
+      });
+    }
+
+    async function onSession(session) {
+      currentUser = session.user;
+      els.userEmail.textContent = currentUser.email;
+      // Check steward status
+      const { data: steward } = await sb
+        .from('stewards')
+        .select('email')
+        .eq('email', currentUser.email)
+        .maybeSingle();
+      if (!steward) {
+        els.deniedEmail.textContent = currentUser.email;
+        show('denied');
+        return;
+      }
+      show('dash');
+      loadApps();
+    }
+
+    els.loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = els.loginEmail.value.trim();
+      if (!email) return;
+      els.loginMessage.textContent = 'Sending…';
+      const { error } = await sb.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: window.location.href },
+      });
+      els.loginMessage.textContent = error
+        ? ('Error: ' + error.message)
+        : 'Check your inbox for a one-time link.';
+    });
+
+    els.logoutBtn.addEventListener('click', () => sb.auth.signOut());
+    els.deniedLogout.addEventListener('click', () => sb.auth.signOut());
+
+    els.tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        els.tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentStatus = tab.dataset.status;
+        loadApps();
+      });
+    });
+
+    async function loadApps() {
+      els.apps.innerHTML = '<p class="empty">Loading…</p>';
+      const { data: apps, error } = await sb
+        .from('applications')
+        .select('*')
+        .eq('status', currentStatus)
+        .order('created_at', { ascending: false });
+      if (error) { els.apps.innerHTML = '<p class="empty">Error: ' + error.message + '</p>'; return; }
+      if (!apps || !apps.length) { els.apps.innerHTML = '<p class="empty">No ' + currentStatus + ' applications.</p>'; return; }
+
+      // Bulk-load votes for these apps
+      const { data: votes } = await sb
+        .from('application_votes')
+        .select('*')
+        .in('application_id', apps.map(a => a.id));
+      const votesByApp = {};
+      (votes || []).forEach(v => { (votesByApp[v.application_id] = votesByApp[v.application_id] || []).push(v); });
+
+      els.apps.innerHTML = apps.map(a => renderCard(a, votesByApp[a.id] || [])).join('');
+      els.apps.querySelectorAll('[data-vote]').forEach(btn => {
+        btn.addEventListener('click', () => castVote(btn.dataset.id, btn.dataset.vote, btn));
+      });
+    }
+
+    function escapeHtml(s) {
+      if (s == null) return '';
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    function renderCard(a, votes) {
+      const yes = votes.filter(v => v.vote === 'yes');
+      const no = votes.filter(v => v.vote === 'no');
+      const myVote = votes.find(v => v.voter_email === currentUser.email);
+      const isPending = a.status === 'pending';
+      const tally = `${yes.length} yes · ${no.length} no` + (myVote ? ` · you: ${myVote.vote}` : '');
+
+      return `
+        <article class="card">
+          <div class="row" style="justify-content: space-between;">
+            <div>
+              <h3>${escapeHtml(a.name)}</h3>
+              <div class="field" style="color: var(--ink-muted);">${escapeHtml(a.email)}${a.role ? ' · ' + escapeHtml(a.role) : ''}</div>
+            </div>
+            <span class="status ${a.status}">${a.status}</span>
+          </div>
+          ${a.url ? `<div class="field" style="margin-top:8px;"><strong>URL</strong><a href="${escapeHtml(a.url)}" target="_blank" rel="noopener">${escapeHtml(a.url)}</a></div>` : ''}
+          ${a.subscribe_opencivics ? `<div class="field" style="margin-top:4px;"><strong>OpenCivics</strong>member</div>` : ''}
+          ${a.interest ? `<div class="interest">${escapeHtml(a.interest)}</div>` : ''}
+          <div class="vote-bar">
+            ${isPending ? `
+              <button class="primary" data-vote="yes" data-id="${a.id}">Approve</button>
+              <button class="danger"  data-vote="no"  data-id="${a.id}">Deny</button>
+            ` : `
+              <span class="field" style="color: var(--ink-muted);">Reviewed ${a.reviewed_at ? new Date(a.reviewed_at).toLocaleDateString() : ''}</span>
+            `}
+            <span class="vote-tally">${tally}</span>
+          </div>
+        </article>`;
+    }
+
+    async function castVote(applicationId, vote, btn) {
+      const card = btn.closest('.card');
+      card.querySelectorAll('button').forEach(b => b.disabled = true);
+      const { data: { session } } = await sb.auth.getSession();
+      try {
+        const res = await fetch(SUPABASE_URL + '/functions/v1/vote-application', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + session.access_token,
+            'apikey': SUPABASE_ANON_KEY,
+          },
+          body: JSON.stringify({ application_id: applicationId, vote }),
+        });
+        const out = await res.json();
+        if (!res.ok) throw new Error(out.error || ('HTTP ' + res.status));
+        showToast(`Vote recorded: ${out.vote_recorded}. Status: ${out.status}.`);
+        loadApps();
+      } catch (err) {
+        console.error(err);
+        showToast('Error: ' + err.message);
+        card.querySelectorAll('button').forEach(b => b.disabled = false);
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

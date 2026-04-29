@@ -23,6 +23,9 @@
   <meta name="twitter:description" content="A two-month convening (May + June 2026) where participants pool what already exists into an open Knowledge Commons Toolkit any community can pick up and use.">
   <meta name="twitter:image" content="https://swarm01.opencivics.co/social-share.jpg">
   <meta name="twitter:image:alt" content="Halftone collage of seedpod-like organic forms in white on black.">
+
+  <!-- Supabase config (anon key is public; RLS protects data) -->
+  <script src="/supabase-config.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Inconsolata:wght@400;500&display=swap" rel="stylesheet">
@@ -4499,7 +4502,10 @@
           </label>
         </div>
         <div class="full-width" style="margin-top:0.5rem;">
-          <button class="btn btn-dark" onclick="submitSignup()" style="padding:12px 24px; font-size:0.85rem;">Sign Up <span class="arrow">→</span></button>
+          <button id="signupSubmitBtn" class="btn btn-dark" onclick="submitSignup()" style="padding:12px 24px; font-size:0.85rem;">Sign Up <span class="arrow">→</span></button>
+        </div>
+        <div class="full-width">
+          <p id="signupMessage" style="margin: 0; font-size: 0.9rem; color: var(--ink-muted); display: none;"></p>
         </div>
       </div>
     </div>
@@ -4701,22 +4707,78 @@
       document.getElementById('signupOverlay').classList.remove('open');
     }
 
+    // Supabase config — anon key is public by design (RLS protects writes).
+    // Set after `supabase link`; values are visible in the project's API settings.
+    var SUPABASE_URL = window.SUPABASE_URL || '';
+    var SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || '';
+
+    function setSignupMessage(text, kind) {
+      var el = document.getElementById('signupMessage');
+      if (!el) return;
+      el.textContent = text;
+      el.style.display = text ? 'block' : 'none';
+      el.style.color = kind === 'error' ? '#c0392b'
+                      : kind === 'success' ? 'var(--ink)'
+                      : 'var(--ink-muted)';
+    }
+
     function submitSignup() {
       var name = document.getElementById('signupName').value.trim();
       var email = document.getElementById('signupEmail').value.trim();
-      if (!name || !email) { alert('Please enter your name and email.'); return; }
-      // Add to carousel
-      var track = document.querySelector('.hero-carousel-track');
-      if (track) {
-        var initials = name.split(' ').map(function(w){return w[0]}).join('').toUpperCase().slice(0,2);
-        var av = document.createElement('div');
-        av.className = 'hc-avatar';
-        av.setAttribute('data-name', name);
-        av.textContent = initials;
-        track.appendChild(av);
+      var role = document.getElementById('signupRole').value.trim();
+      var interest = document.getElementById('signupInterest').value.trim();
+      var url = document.getElementById('signupUrl').value.trim();
+      var subscribe = document.getElementById('signupOpencivics').checked;
+
+      if (!name || !email) {
+        setSignupMessage('Please enter your name and email.', 'error');
+        return;
       }
-      closeSignupModal();
-      alert('Welcome to the swarm, ' + name + '!');
+      if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+        setSignupMessage('Signup is not yet wired up. Check back shortly.', 'error');
+        return;
+      }
+
+      var btn = document.getElementById('signupSubmitBtn');
+      if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
+      setSignupMessage('Submitting…', 'info');
+
+      fetch(SUPABASE_URL + '/rest/v1/applications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({
+          name: name,
+          email: email,
+          role: role || null,
+          interest: interest || null,
+          url: url || null,
+          subscribe_opencivics: subscribe
+        })
+      }).then(function(res) {
+        if (!res.ok) return res.text().then(function(t){ throw new Error(t || ('HTTP ' + res.status)); });
+        // Add to carousel as a small UX touch
+        var track = document.querySelector('.hero-carousel-track');
+        if (track) {
+          var initials = name.split(' ').map(function(w){return w[0]}).join('').toUpperCase().slice(0,2);
+          var av = document.createElement('div');
+          av.className = 'hc-avatar';
+          av.setAttribute('data-name', name);
+          av.textContent = initials;
+          track.appendChild(av);
+        }
+        setSignupMessage('Application received. Check your email for confirmation.', 'success');
+        setTimeout(closeSignupModal, 1800);
+      }).catch(function(err) {
+        console.error('Signup error:', err);
+        setSignupMessage('Something went wrong — please try again or email team@opencivics.co.', 'error');
+      }).then(function() {
+        if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+      });
     }
 
     // ---- Environment switching ----
