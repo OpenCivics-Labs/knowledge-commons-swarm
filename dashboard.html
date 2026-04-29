@@ -200,7 +200,12 @@
       throw new Error('Supabase not configured');
     }
 
-    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // Implicit flow: magic link delivers `#access_token=...` in the URL hash
+    // and supabase-js picks it up on load — no localStorage code_verifier
+    // required, so links work across browsers/devices.
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: { flowType: 'implicit', detectSessionInUrl: true, persistSession: true },
+    });
 
     const els = {
       login: document.getElementById('loginPane'),
