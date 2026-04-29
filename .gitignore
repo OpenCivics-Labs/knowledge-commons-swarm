@@ -6,3 +6,8 @@
 
 # Local planning/scratch files
 *.md
+
+# Supabase CLI artifacts
+supabase/.temp/
+supabase/.branches/
+
