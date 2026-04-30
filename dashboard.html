@@ -340,6 +340,7 @@
             <span class="status ${a.status}">${a.status}</span>
           </div>
           ${a.url ? `<div class="field" style="margin-top:8px;"><strong>URL</strong><a href="${escapeHtml(a.url)}" target="_blank" rel="noopener">${escapeHtml(a.url)}</a></div>` : ''}
+          ${a.telegram_username ? `<div class="field" style="margin-top:4px;"><strong>Telegram</strong>${escapeHtml(a.telegram_username)}</div>` : ''}
           ${a.subscribe_opencivics ? `<div class="field" style="margin-top:4px;"><strong>OpenCivics</strong>member</div>` : ''}
           ${a.interest ? `<div class="interest">${escapeHtml(a.interest)}</div>` : ''}
           <div class="vote-bar">

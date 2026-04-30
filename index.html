@@ -4473,7 +4473,7 @@
     <div class="modal" onclick="event.stopPropagation()">
       <button class="modal-close" onclick="closeSignupModal()">✕</button>
       <h3 style="margin-bottom:0.5rem;">Join the Swarm</h3>
-      <p style="font-size:0.9rem; color:var(--ink-muted); margin-bottom:1.5rem;">Sign up as a participant for the Knowledge Commoning Swarm, May + June 2026.</p>
+      <p style="font-size:0.9rem; color:var(--ink-muted); margin-bottom:1.5rem;">Participate in the Knowledge Commoning Swarm, May + June 2026.</p>
       <div class="card-form" style="grid-template-columns: 1fr;">
         <div class="form-field">
           <label>Name</label>
@@ -4494,6 +4494,10 @@
         <div class="form-field">
           <label>Website / Profile</label>
           <input type="url" id="signupUrl" placeholder="https://...">
+        </div>
+        <div class="form-field">
+          <label>Telegram username</label>
+          <input type="text" id="signupTelegram" placeholder="@yourhandle">
         </div>
         <div class="form-field full-width">
           <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; text-transform: none; letter-spacing: normal; font-family: var(--font-sans); font-size: 0.95rem; font-weight: 500; color: var(--ink);">
@@ -4728,6 +4732,7 @@
       var role = document.getElementById('signupRole').value.trim();
       var interest = document.getElementById('signupInterest').value.trim();
       var url = document.getElementById('signupUrl').value.trim();
+      var telegram = document.getElementById('signupTelegram').value.trim();
       var subscribe = document.getElementById('signupOpencivics').checked;
 
       if (!name || !email) {
@@ -4757,6 +4762,7 @@
           role: role || null,
           interest: interest || null,
           url: url || null,
+          telegram_username: telegram || null,
           subscribe_opencivics: subscribe
         })
       }).then(function(res) {

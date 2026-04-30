@@ -72,6 +72,7 @@ serve(async (req: Request) => {
           <tr><td style="padding: 6px 0; color: #555; width: 140px;">Email</td><td>${escapeHtml(r.email)}</td></tr>
           <tr><td style="padding: 6px 0; color: #555;">Role</td><td>${escapeHtml(r.role)}</td></tr>
           <tr><td style="padding: 6px 0; color: #555;">URL</td><td>${escapeHtml(r.url)}</td></tr>
+          <tr><td style="padding: 6px 0; color: #555;">Telegram</td><td>${escapeHtml(r.telegram_username)}</td></tr>
           <tr><td style="padding: 6px 0; color: #555;">OpenCivics member</td><td>${r.subscribe_opencivics ? "Yes" : "No"}</td></tr>
           <tr><td style="padding: 6px 0; color: #555; vertical-align: top;">Draws them</td><td>${escapeHtml(r.interest)}</td></tr>
         </table>
