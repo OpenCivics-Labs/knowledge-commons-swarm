@@ -2621,7 +2621,7 @@
       border-radius: 0;
       max-width: 640px;
       width: 100%;
-      max-height: 80vh;
+      max-height: calc(100vh - 4rem);
       overflow-y: auto;
       padding: 2.5rem;
       border: 2px solid var(--black);
@@ -2981,36 +2981,10 @@
           </div>
         </div>
       </div>
-      <!-- Full-width participants carousel -->
+      <!-- Full-width participants carousel — populated dynamically from approved members -->
       <div class="hero-carousel-wrap">
         <div class="participants-label" style="max-width: var(--max-width); margin: 0 auto; padding: 0 clamp(1.5rem, 4vw, 3rem) 0.75rem;">Participants</div>
-        <div class="hero-carousel-track">
-          <div class="hc-avatar" data-name="Benjamin Life">BL</div>
-          <div class="hc-avatar" data-name="Patricia Parkinson">PP</div>
-          <div class="hc-avatar" data-name="Spencer Cavanaugh">SC</div>
-          <div class="hc-avatar" data-name="Benjamin Life">BL</div>
-          <div class="hc-avatar" data-name="Patricia Parkinson">PP</div>
-          <div class="hc-avatar" data-name="Spencer Cavanaugh">SC</div>
-          <div class="hc-avatar" data-name="Benjamin Life">BL</div>
-          <div class="hc-avatar" data-name="Patricia Parkinson">PP</div>
-          <div class="hc-avatar" data-name="Spencer Cavanaugh">SC</div>
-          <div class="hc-avatar" data-name="Benjamin Life">BL</div>
-          <div class="hc-avatar" data-name="Patricia Parkinson">PP</div>
-          <div class="hc-avatar" data-name="Spencer Cavanaugh">SC</div>
-          <!-- duplicate for seamless loop -->
-          <div class="hc-avatar" data-name="Benjamin Life">BL</div>
-          <div class="hc-avatar" data-name="Patricia Parkinson">PP</div>
-          <div class="hc-avatar" data-name="Spencer Cavanaugh">SC</div>
-          <div class="hc-avatar" data-name="Benjamin Life">BL</div>
-          <div class="hc-avatar" data-name="Patricia Parkinson">PP</div>
-          <div class="hc-avatar" data-name="Spencer Cavanaugh">SC</div>
-          <div class="hc-avatar" data-name="Benjamin Life">BL</div>
-          <div class="hc-avatar" data-name="Patricia Parkinson">PP</div>
-          <div class="hc-avatar" data-name="Spencer Cavanaugh">SC</div>
-          <div class="hc-avatar" data-name="Benjamin Life">BL</div>
-          <div class="hc-avatar" data-name="Patricia Parkinson">PP</div>
-          <div class="hc-avatar" data-name="Spencer Cavanaugh">SC</div>
-        </div>
+        <div class="hero-carousel-track" id="heroCarouselTrack"></div>
       </div>
     </section>
 
@@ -4716,6 +4690,67 @@
     var SUPABASE_URL = window.SUPABASE_URL || '';
     var SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || '';
 
+    // Stewards always appear in the carousel as the founding members.
+    var STEWARD_MEMBERS = ['Benjamin Life', 'Patricia Parkinson', 'Spencer Cavanaugh'];
+
+    function initialsFor(name) {
+      return String(name || '')
+        .split(/\s+/)
+        .filter(Boolean)
+        .map(function(w){ return w[0]; })
+        .join('')
+        .toUpperCase()
+        .slice(0, 2);
+    }
+
+    function renderCarousel(names) {
+      var track = document.getElementById('heroCarouselTrack');
+      if (!track) return;
+      // Need enough avatars to fill the screen so the -50% loop reads as continuous.
+      // Pad the base list by repeating it until we have at least 12 entries, then duplicate.
+      var base = names.slice();
+      if (base.length === 0) return;
+      while (base.length < 12) base = base.concat(names);
+      var doubled = base.concat(base); // duplicate for seamless -50% scroll
+      var html = doubled.map(function(n) {
+        var safe = String(n).replace(/"/g, '&quot;').replace(/</g, '&lt;');
+        return '<div class="hc-avatar" data-name="' + safe + '">' + initialsFor(n) + '</div>';
+      }).join('');
+      track.innerHTML = html;
+    }
+
+    function loadApprovedMembers() {
+      // Render stewards immediately so the carousel is never empty on first paint.
+      renderCarousel(STEWARD_MEMBERS);
+      if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return;
+      fetch(SUPABASE_URL + '/rest/v1/rpc/list_approved_members', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+        },
+        body: '{}'
+      }).then(function(res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      }).then(function(rows) {
+        var approved = (rows || []).map(function(r){ return r.name; }).filter(Boolean);
+        // De-duplicate against stewards (in case a steward also has an approved application).
+        var seen = {};
+        var combined = STEWARD_MEMBERS.concat(approved).filter(function(n) {
+          var key = n.toLowerCase();
+          if (seen[key]) return false;
+          seen[key] = true;
+          return true;
+        });
+        renderCarousel(combined);
+      }).catch(function(err) {
+        console.warn('Could not load approved members:', err);
+        // Stewards are already rendered as a fallback.
+      });
+    }
+
     function setSignupMessage(text, kind) {
       var el = document.getElementById('signupMessage');
       if (!el) return;
@@ -4767,16 +4802,7 @@
         })
       }).then(function(res) {
         if (!res.ok) return res.text().then(function(t){ throw new Error(t || ('HTTP ' + res.status)); });
-        // Add to carousel as a small UX touch
-        var track = document.querySelector('.hero-carousel-track');
-        if (track) {
-          var initials = name.split(' ').map(function(w){return w[0]}).join('').toUpperCase().slice(0,2);
-          var av = document.createElement('div');
-          av.className = 'hc-avatar';
-          av.setAttribute('data-name', name);
-          av.textContent = initials;
-          track.appendChild(av);
-        }
+        // Carousel intentionally not updated here — applicants only appear after stewards approve.
         setSignupMessage('Application received. Check your email for confirmation.', 'success');
         setTimeout(closeSignupModal, 1800);
       }).catch(function(err) {
@@ -4968,6 +4994,9 @@
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') { closeModal(); closeSignupModal(); }
     });
+
+    // ---- Populate participants carousel from approved members ----
+    loadApprovedMembers();
   </script>
 
 </body>
