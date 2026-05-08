@@ -546,6 +546,14 @@
       color: var(--green);
     }
 
+    .hc-avatar-photo { padding: 0; overflow: hidden; }
+    .hc-avatar-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
     .participant-link {
       display: block;
       margin-top: 0.75rem;
@@ -2706,7 +2714,8 @@
     .participant-card { background: var(--white); border: 1px solid var(--border-light); padding: 1.5rem; transition: all 0.3s var(--ease); }
     .participant-card:hover { border-color: var(--black); }
     .participant-info { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
-    .participant-avatar { width: 56px; height: 56px; background: var(--cream); display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700; flex-shrink: 0; font-family: var(--font-mono); color: var(--ink-muted); }
+    .participant-avatar { width: 56px; height: 56px; background: var(--cream); display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700; flex-shrink: 0; font-family: var(--font-mono); color: var(--ink-muted); overflow: hidden; }
+    .participant-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .participant-info h4 { font-size: 1rem; margin-bottom: 2px; line-height: 1.2; }
     .participant-role { font-size: 0.78rem; color: var(--ink-faint); font-weight: 500; line-height: 1.35; display: block; }
     .participant-info > div { line-height: 1.2; }
@@ -2733,29 +2742,6 @@
       line-height: 1.55;
       color: var(--ink-secondary);
       font-style: italic;
-    }
-    .participant-active-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 5px 8px;
-      background: var(--green-pale);
-      border: 1px solid var(--green);
-      font-family: var(--font-mono);
-      font-size: 0.62rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: var(--ink-secondary);
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-    .participant-active-tag::before {
-      content: '';
-      width: 6px;
-      height: 6px;
-      background: var(--green);
-      border-radius: 50%;
     }
     .participant-btn {
       display: inline-flex;
@@ -2870,7 +2856,6 @@
 
       /* Participant cards */
       .participant-actions { flex-wrap: wrap; }
-      .participant-actions .participant-active-tag { width: auto; }
 
       /* CTA section */
       .cta-section .container { padding-left: 1rem; padding-right: 1rem; }
@@ -3882,7 +3867,7 @@
           <h2>Participants</h2>
           <p>People contributing to the Knowledge Commons Toolkit, and the objects they're associated with across the commons.</p>
         </div>
-        <div class="participants-grid">
+        <div class="participants-grid" id="participantsGrid">
           <div class="participant-card">
             <div class="participant-info">
               <div class="participant-avatar">JD</div>
@@ -3896,8 +3881,6 @@
               <p>Pattern libraries that are actually maintained — most die after launch. Curious how this swarm sustains attention beyond the weekend.</p>
             </div>
             <div class="participant-actions">
-              <span class="participant-active-tag">Scout</span>
-              <a href="#" class="participant-btn participant-btn-primary">View profile</a>
               <button class="participant-btn" onclick="showFilteredFeed(this)">View activity →</button>
             </div>
           </div>
@@ -3910,8 +3893,6 @@
               </div>
             </div>
             <div class="participant-actions">
-              <span class="participant-active-tag">Connect</span>
-              <a href="#" class="participant-btn participant-btn-primary">View profile</a>
               <button class="participant-btn" onclick="showFilteredFeed(this)">View activity →</button>
             </div>
           </div>
@@ -3928,8 +3909,6 @@
               <p>Communities I work with need governance models that don't require technical infrastructure. Hoping to find or shape patterns we can adopt.</p>
             </div>
             <div class="participant-actions">
-              <span class="participant-active-tag">Garden</span>
-              <a href="#" class="participant-btn participant-btn-primary">View profile</a>
               <button class="participant-btn" onclick="showFilteredFeed(this)">View activity →</button>
             </div>
           </div>
@@ -3942,8 +3921,6 @@
               </div>
             </div>
             <div class="participant-actions">
-              <span class="participant-active-tag">Compose</span>
-              <a href="#" class="participant-btn participant-btn-primary">View profile</a>
               <button class="participant-btn" onclick="showFilteredFeed(this)">View activity →</button>
             </div>
           </div>
@@ -3960,8 +3937,6 @@
               <p>Looking for shared vocabulary across mapping projects so we stop reinventing terms every time we collaborate.</p>
             </div>
             <div class="participant-actions">
-              <span class="participant-active-tag">Scout</span>
-              <a href="#" class="participant-btn participant-btn-primary">View profile</a>
               <button class="participant-btn" onclick="showFilteredFeed(this)">View activity →</button>
             </div>
           </div>
@@ -3974,8 +3949,6 @@
               </div>
             </div>
             <div class="participant-actions">
-              <span class="participant-active-tag">Harvest</span>
-              <a href="#" class="participant-btn participant-btn-primary">View profile</a>
               <button class="participant-btn" onclick="showFilteredFeed(this)">View activity →</button>
             </div>
           </div>
@@ -4474,6 +4447,13 @@
           <input type="text" id="signupTelegram" placeholder="@yourhandle">
         </div>
         <div class="form-field full-width">
+          <label>Profile photo</label>
+          <div style="display:flex; align-items:center; gap:14px;">
+            <div id="signupPhotoPreview" aria-hidden="true" style="width:56px; height:56px; background:var(--cream); border:1px solid var(--border-light); display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:0.7rem; color:var(--ink-faint); overflow:hidden; flex-shrink:0;">—</div>
+            <input type="file" id="signupPhoto" accept="image/*" style="font-family: var(--font-sans); font-size: 0.85rem;">
+          </div>
+        </div>
+        <div class="form-field full-width">
           <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; text-transform: none; letter-spacing: normal; font-family: var(--font-sans); font-size: 0.95rem; font-weight: 500; color: var(--ink);">
             <input type="checkbox" id="signupOpencivics" style="width: 18px; height: 18px; margin: 0; cursor: pointer; accent-color: var(--accent);">
             I am a member of OpenCivics
@@ -4685,13 +4665,33 @@
       document.getElementById('signupOverlay').classList.remove('open');
     }
 
+    // Live preview when a photo is selected.
+    document.addEventListener('DOMContentLoaded', function() {
+      var input = document.getElementById('signupPhoto');
+      var preview = document.getElementById('signupPhotoPreview');
+      if (!input || !preview) return;
+      input.addEventListener('change', function() {
+        var file = input.files && input.files[0];
+        if (!file) { preview.innerHTML = '—'; return; }
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          preview.innerHTML = '<img src="' + e.target.result + '" alt="" style="width:100%; height:100%; object-fit:cover;">';
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
     // Supabase config — anon key is public by design (RLS protects writes).
     // Set after `supabase link`; values are visible in the project's API settings.
     var SUPABASE_URL = window.SUPABASE_URL || '';
     var SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || '';
 
     // Stewards always appear in the carousel as the founding members.
-    var STEWARD_MEMBERS = ['Benjamin Life', 'Patricia Parkinson', 'Spencer Cavanaugh'];
+    var STEWARD_MEMBERS = [
+      { name: 'Benjamin Life', photo_url: null },
+      { name: 'Patricia Parkinson', photo_url: null },
+      { name: 'Spencer Cavanaugh', photo_url: null }
+    ];
 
     function initialsFor(name) {
       return String(name || '')
@@ -4703,20 +4703,52 @@
         .slice(0, 2);
     }
 
-    function renderCarousel(names) {
+    function escapeAttr(s) {
+      return String(s == null ? '' : s).replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    }
+
+    function renderCarousel(members) {
       var track = document.getElementById('heroCarouselTrack');
       if (!track) return;
       // Need enough avatars to fill the screen so the -50% loop reads as continuous.
       // Pad the base list by repeating it until we have at least 12 entries, then duplicate.
-      var base = names.slice();
+      var base = members.slice();
       if (base.length === 0) return;
-      while (base.length < 12) base = base.concat(names);
+      while (base.length < 12) base = base.concat(members);
       var doubled = base.concat(base); // duplicate for seamless -50% scroll
-      var html = doubled.map(function(n) {
-        var safe = String(n).replace(/"/g, '&quot;').replace(/</g, '&lt;');
-        return '<div class="hc-avatar" data-name="' + safe + '">' + initialsFor(n) + '</div>';
+      var html = doubled.map(function(m) {
+        var name = escapeAttr(m.name);
+        if (m.photo_url) {
+          return '<div class="hc-avatar hc-avatar-photo" data-name="' + name + '">'
+            + '<img src="' + escapeAttr(m.photo_url) + '" alt="' + name + '">'
+            + '</div>';
+        }
+        return '<div class="hc-avatar" data-name="' + name + '">' + initialsFor(m.name) + '</div>';
       }).join('');
       track.innerHTML = html;
+    }
+
+    function renderParticipantsGrid(members) {
+      var grid = document.getElementById('participantsGrid');
+      if (!grid) return;
+      if (!members || !members.length) return;
+      // Prepend real participants ahead of the static demo cards already in the grid.
+      var html = members.map(function(m) {
+        var name = escapeAttr(m.name);
+        var avatar = m.photo_url
+          ? '<img src="' + escapeAttr(m.photo_url) + '" alt="' + name + '">'
+          : initialsFor(m.name);
+        return '<div class="participant-card">'
+          + '<div class="participant-info">'
+            + '<div class="participant-avatar">' + avatar + '</div>'
+            + '<div><h4>' + name + '</h4></div>'
+          + '</div>'
+          + '<div class="participant-actions">'
+            + '<button class="participant-btn" onclick="showFilteredFeed(this)">View activity →</button>'
+          + '</div>'
+        + '</div>';
+      }).join('');
+      grid.insertAdjacentHTML('afterbegin', html);
     }
 
     function loadApprovedMembers() {
@@ -4735,16 +4767,19 @@
         if (!res.ok) throw new Error('HTTP ' + res.status);
         return res.json();
       }).then(function(rows) {
-        var approved = (rows || []).map(function(r){ return r.name; }).filter(Boolean);
+        var approved = (rows || [])
+          .filter(function(r){ return r && r.name; })
+          .map(function(r){ return { name: r.name, photo_url: r.photo_url || null }; });
         // De-duplicate against stewards (in case a steward also has an approved application).
         var seen = {};
-        var combined = STEWARD_MEMBERS.concat(approved).filter(function(n) {
-          var key = n.toLowerCase();
+        var combined = STEWARD_MEMBERS.concat(approved).filter(function(m) {
+          var key = m.name.toLowerCase();
           if (seen[key]) return false;
           seen[key] = true;
           return true;
         });
         renderCarousel(combined);
+        renderParticipantsGrid(approved);
       }).catch(function(err) {
         console.warn('Could not load approved members:', err);
         // Stewards are already rendered as a fallback.
@@ -4761,6 +4796,27 @@
                       : 'var(--ink-muted)';
     }
 
+    function uploadProfilePhoto(file) {
+      // Random object name keeps unrelated uploads from colliding.
+      var ext = (file.name.match(/\.[A-Za-z0-9]+$/) || ['.jpg'])[0].toLowerCase();
+      var rand = Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+      var path = rand + ext;
+      var uploadUrl = SUPABASE_URL + '/storage/v1/object/profile-photos/' + encodeURIComponent(path);
+      return fetch(uploadUrl, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'Content-Type': file.type || 'application/octet-stream',
+          'x-upsert': 'true'
+        },
+        body: file
+      }).then(function(res) {
+        if (!res.ok) return res.text().then(function(t){ throw new Error(t || ('HTTP ' + res.status)); });
+        return SUPABASE_URL + '/storage/v1/object/public/profile-photos/' + encodeURIComponent(path);
+      });
+    }
+
     function submitSignup() {
       var name = document.getElementById('signupName').value.trim();
       var email = document.getElementById('signupEmail').value.trim();
@@ -4769,6 +4825,8 @@
       var url = document.getElementById('signupUrl').value.trim();
       var telegram = document.getElementById('signupTelegram').value.trim();
       var subscribe = document.getElementById('signupOpencivics').checked;
+      var photoInput = document.getElementById('signupPhoto');
+      var photoFile = photoInput && photoInput.files && photoInput.files[0];
 
       if (!name || !email) {
         setSignupMessage('Please enter your name and email.', 'error');
@@ -4781,25 +4839,33 @@
 
       var btn = document.getElementById('signupSubmitBtn');
       if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
-      setSignupMessage('Submitting…', 'info');
+      setSignupMessage(photoFile ? 'Uploading photo…' : 'Submitting…', 'info');
 
-      fetch(SUPABASE_URL + '/rest/v1/applications', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify({
-          name: name,
-          email: email,
-          role: role || null,
-          interest: interest || null,
-          url: url || null,
-          telegram_username: telegram || null,
-          subscribe_opencivics: subscribe
-        })
+      var photoStep = photoFile
+        ? uploadProfilePhoto(photoFile)
+        : Promise.resolve(null);
+
+      photoStep.then(function(photoUrl) {
+        setSignupMessage('Submitting…', 'info');
+        return fetch(SUPABASE_URL + '/rest/v1/applications', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({
+            name: name,
+            email: email,
+            role: role || null,
+            interest: interest || null,
+            url: url || null,
+            telegram_username: telegram || null,
+            photo_url: photoUrl,
+            subscribe_opencivics: subscribe
+          })
+        });
       }).then(function(res) {
         if (!res.ok) return res.text().then(function(t){ throw new Error(t || ('HTTP ' + res.status)); });
         // Carousel intentionally not updated here — applicants only appear after stewards approve.
@@ -4855,11 +4921,34 @@
         : '<span class="arrow">←</span> Invitation';
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Reflect state in URL hash so deep links work and back/forward feels right.
+      var desiredHash = env === 'invitation' ? '' : '#' + (env === 'feed' ? 'feed' : 'participate');
+      if ((window.location.hash || '') !== desiredHash) {
+        history.replaceState(null, '', window.location.pathname + desiredHash);
+      }
     }
 
     function toggleEnv() {
       showEnv(currentEnv === 'invitation' ? 'participant' : 'invitation');
     }
+
+    // Boot from URL hash so /#participate and /#feed deep-link into those views
+    // without needing nav links.
+    function envFromHash() {
+      var h = (window.location.hash || '').replace('#', '').toLowerCase();
+      if (h === 'feed') return 'feed';
+      if (h === 'participate' || h === 'participant') return 'participant';
+      return null;
+    }
+    (function initFromHash() {
+      var initial = envFromHash();
+      if (initial) showEnv(initial);
+    })();
+    window.addEventListener('hashchange', function() {
+      var env = envFromHash() || 'invitation';
+      showEnv(env);
+    });
 
     // ---- Tab switching ----
     document.querySelectorAll('.p-tab').forEach(tab => {
